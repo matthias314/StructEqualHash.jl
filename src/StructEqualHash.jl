@@ -4,7 +4,7 @@ export @struct_equal_hash
 
 Base.@assume_effects :foldable typeid(T::Type) = objectid(T)
 
-typehash(::Type{T}, h::UInt) where T = hash(3*h-typeid(T))
+typehash(::Type{T}, h::UInt = UInt(0)) where T = hash(3*h-typeid(T))
 
 totuple(x::T) where T = ntuple(i -> getfield(x, i), fieldcount(T))
 
