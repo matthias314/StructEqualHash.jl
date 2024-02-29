@@ -1,29 +1,17 @@
-module StructEqualHash
+# StructEqualHash.jl
 
-export @struct_equal_hash
+This is a Julia package to define equality and hash for structs.
+It is similar to [AutoHashEquals.jl](https://github.com/JuliaServices/AutoHashEquals.jl)
+and [StructEquality.jl](https://github.com/jolin-io/StructEquality.jl).
+It aims to be lightweight and does not use `@generated` code.
 
-Base.@assume_effects :foldable typeid(T::Type) = objectid(T)
+## Usage
 
-typehash(::Type{T}, h::UInt = UInt(0)) where T = hash(3*h-typeid(T))
-
-totuple(x::T) where T = ntuple(i -> getfield(x, i), fieldcount(T))
-
-iswhere(ex) = Meta.isexpr(ex, :where)
-
-peel(ex) = iswhere(ex) ? peel(ex.args[1]) : ex
-
-function wrap(ex, ex2)
-    if iswhere(ex)
-        Expr(ex.head, wrap(ex.args[1], ex2), map(esc, ex.args[2:end])...)
-    else
-        ex2
-    end
-end
-
-"""
-    @struct_equal_hash T
-
-Generate definitions for `==`, `isequal` and `hash` for the struct `T`,
+The macro call
+```julia
+@struct_equal_hash T
+```
+generates definitions for `==`, `isequal` and `hash` for the struct `T`,
 ```julia
     function x::T == y::T
     function isequal(x::T, y::T)
@@ -67,17 +55,3 @@ If both types may differ, you can say
     @struct_equal_hash T{P where P,Q where Q}
 ```
 or again omit the parameters.
-"""
-macro struct_equal_hash(TW)
-    T = esc(peel(TW))
-    ex1 = wrap(TW, :(Base.:(==)(x::$T, y::$T)))
-    ex2 = wrap(TW, :(Base.isequal(x::$T, y::$T)))    
-    ex3 = wrap(TW, :(Base.hash(x::$T, h::UInt)))
-    quote
-        $ex1 = totuple(x) == totuple(y)
-        $ex2 = isequal(totuple(x), totuple(y))
-        $ex3 = hash(totuple(x), typehash($T, h))
-    end
-end
-
-end
