@@ -1,8 +1,9 @@
 # StructEqualHash.jl
 
 This is a Julia package to define equality and hash for structs.
-It is similar to [AutoHashEquals.jl](https://github.com/JuliaServices/AutoHashEquals.jl)
-and [StructEquality.jl](https://github.com/jolin-io/StructEquality.jl).
+It is similar to [AutoHashEquals.jl](https://github.com/JuliaServices/AutoHashEquals.jl),
+[StructEquality.jl](https://github.com/jolin-io/StructEquality.jl) and
+[StructHelpers.jl](https://github.com/jw3126/StructHelpers.jl).
 It aims to be lightweight and does not use `@generated` code.
 
 ## Usage
