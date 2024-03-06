@@ -13,6 +13,7 @@ Base.@assume_effects :foldable typeid(T::Type) = objectid(T)
 typehash(::Type{T}, h::UInt = UInt(0)) where T = hash(3*h-typeid(T))
 
 totuple(x, fields) = map(name -> getfield(x, name), fields)
+totuple(x::T, ::Missing) where T = totuple(x, fieldnames(T))
 
 iswhere(ex) = Meta.isexpr(ex, :where)
 
@@ -99,7 +100,7 @@ julia> T(1, 1) == T(2, 1)       # method for T{P} where P <: Number
 true
 ```
 """
-macro struct_equal_hash(TW, fields = :(fieldnames($(esc(TW)))))
+macro struct_equal_hash(TW, fields = missing)
     T = esc(peel(TW))
     ex1 = wrap(TW, :(Base.:(==)(x::$T, y::$T)))
     ex2 = wrap(TW, :(Base.isequal(x::$T, y::$T)))
