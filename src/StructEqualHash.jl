@@ -8,12 +8,11 @@ module StructEqualHash
 
 export @struct_equal_hash
 
-if VERSION < v"1.11"
+if VERSION < v"1.11.6"
     Base.@assume_effects :foldable typeid(T::Type) = objectid(T)
     typehash(::Type{T}, h::UInt = UInt(0)) where T = hash(typeid(T), h)
 else
-    # `hash(T, h)` should work, but we have to work around julia#58395
-    typehash(::Type{T}, h::UInt = UInt(0)) where T = hash(hash(T), h)
+    const typehash = hash
 end
 
 totuple(x, fields) = map(name -> getfield(x, name), fields)
