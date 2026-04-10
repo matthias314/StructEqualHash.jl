@@ -14,9 +14,9 @@ The macro call
 ```
 generates definitions for `==`, `isequal` and `hash` for the struct `T`,
 ```julia
-    function x::T == y::T
-    function isequal(x::T, y::T)
-    function hash(x::T, h0::UInt)
+function x::T == y::T
+function isequal(x::T, y::T)
+function hash(x::T, h0::UInt)
 ```
 
 The equality tests are applied, using short-circuit logic, to the fields of `T`
@@ -28,9 +28,9 @@ Empty structs are allowed.
 The type can be a `UnionAll` type like `T{P} where P`. In this case the
 definitions are
 ```julia
-    function x::T{P} == y::T{P} where P
-    function isequal(x::T{P}, y::T{P}) where P
-    function hash(x::T{P}, h0::UInt) where P
+function x::T{P} == y::T{P} where P
+function isequal(x::T{P}, y::T{P}) where P
+function hash(x::T{P}, h0::UInt) where P
 ```
 Here the methods for `==` and `isequal` only apply if `x` and `y` are of the same type `T{P}`
 (for the same `P`). If you do not want this for a parametric type, you can simply use the
@@ -63,23 +63,23 @@ true
 
 If `T` has two parameters, then
 ```julia
-    @struct_equal_hash T{P,Q} where {P,Q}
+@struct_equal_hash T{P,Q} where {P,Q}
 ```
 defines methods where the types `P` and `Q` must agree for the two arguments of `==` and `isequal`.
 If you only want the first types to agree, you can say
 ```julia
-    @struct_equal_hash T{P,Q where Q} where P
+@struct_equal_hash T{P,Q where Q} where P
 ```
 or, equivalently,
 ```julia
-    @struct_equal_hash T{P} where P
+@struct_equal_hash T{P} where P
 ```
 If you only want the second types to agree, you can say
 ```julia
-    @struct_equal_hash T{P where P,Q} where Q
+@struct_equal_hash T{P where P,Q} where Q
 ```
 If both types may differ, you can say
 ```julia
-    @struct_equal_hash T{P where P,Q where Q}
+@struct_equal_hash T{P where P,Q where Q}
 ```
 or again omit the parameters.
